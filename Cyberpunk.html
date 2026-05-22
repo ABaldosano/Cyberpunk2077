@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIGHTCITY // NEXUS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--y:#FFE600;
+--r:#FF003C;
+--bg:#050507;
+--bg2:#0A0A0F;
+--bg3:#0F0F18;
+--glass:rgba(255,230,0,0.04);
+--glass2:rgba(255,0,60,0.06);
+--border:rgba(255,230,0,0.15);
+--border2:rgba(255,0,60,0.2);
+--text:#E8E8F0;
+--dim:#6B6B80;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+#cursor{
+  width:12px;height:12px;
+  background:var(--y);
+  position:fixed;top:0;left:0;
+  pointer-events:none;z-index:9999;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  transition:transform 0.1s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  width:36px;height:36px;
+  border:1px solid rgba(255,230,0,0.5);
+  border-radius:50%;
+  position:fixed;top:0;left:0;
+  pointer-events:none;z-index:9998;
+  transition:transform 0.18s ease,width 0.2s,height 0.2s,background 0.2s;
+}
+body:has(a:hover) #cursor-ring,
+body:has(button:hover) #cursor-ring{
+  width:56px;height:56px;
+  background:rgba(255,230,0,0.08);
+}
+
+/* SCANLINES OVERLAY */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.15) 2px,rgba(0,0,0,0.15) 4px);
+  pointer-events:none;z-index:9990;
+  animation:scanMove 8s linear infinite;
+}
+@keyframes scanMove{0%{background-position:0 0}100%{background-position:0 200px}}
+
+/* NOISE GRAIN */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9989;
+  opacity:0.4;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:0 4vw;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+  background:linear-gradient(180deg,rgba(5,5,7,0.95) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1rem;font-weight:900;
+  color:var(--y);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  position:relative;
+}
+.nav-logo::before{
+  content:'//';
+  color:var(--r);
+  margin-right:8px;
+  font-size:0.8rem;
+}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{
+  color:var(--dim);
+  text-decoration:none;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.75rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  transition:color 0.2s;
+  position:relative;
+}
+.nav-links a::after{
+  content:'';
+  position:absolute;bottom:-4px;left:0;width:0;height:1px;
+  background:var(--y);
+  transition:width 0.3s;
+}
+.nav-links a:hover{color:var(--y)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.65rem;font-weight:700;
+  letter-spacing:0.2em;
+  padding:10px 22px;
+  background:transparent;
+  border:1px solid var(--r);
+  color:var(--r);
+  text-transform:uppercase;
+  cursor:none;
+  position:relative;
+  overflow:hidden;
+  transition:color 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.nav-cta::before{
+  content:'';
+  position:absolute;inset:0;
+  background:var(--r);
+  transform:translateX(-105%);
+  transition:transform 0.3s ease;
+}
+.nav-cta:hover{color:#fff}
+.nav-cta:hover::before{transform:translateX(0)}
+.nav-cta span{position:relative;z-index:1}
+
+/* HERO */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;align-items:center;
+  overflow:hidden;
+  padding:0 6vw;
+}
+
+/* BG GRID */
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,230,0,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,230,0,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:gridPulse 4s ease-in-out infinite;
+}
+@keyframes gridPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* GLOW ORBS */
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  pointer-events:none;
+}
+.orb-1{width:600px;height:600px;background:rgba(255,0,60,0.12);top:-100px;right:-100px;animation:drift1 12s ease-in-out infinite}
+.orb-2{width:500px;height:500px;background:rgba(255,230,0,0.08);bottom:-150px;left:20%;animation:drift2 15s ease-in-out infinite}
+.orb-3{width:300px;height:300px;background:rgba(255,0,60,0.07);top:40%;left:-100px;animation:drift3 10s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,40px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-60px)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,50px)}}
+
+/* HUD LINES */
+.hud-corner{
+  position:absolute;
+  width:80px;height:80px;
+  pointer-events:none;
+}
+.hud-corner.tl{top:80px;left:40px;border-top:2px solid var(--y);border-left:2px solid var(--y)}
+.hud-corner.tr{top:80px;right:40px;border-top:2px solid var(--r);border-right:2px solid var(--r)}
+.hud-corner.bl{bottom:40px;left:40px;border-bottom:2px solid var(--r);border-left:2px solid var(--r)}
+.hud-corner.br{bottom:40px;right:40px;border-bottom:2px solid var(--y);border-right:2px solid var(--y)}
+
+.hero-content{
+  position:relative;z-index:10;
+  max-width:900px;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  color:var(--r);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  margin-bottom:2rem;
+  animation:fadeUp 0.8s ease both;
+}
+.hero-tag::before{content:'';width:30px;height:1px;background:var(--r)}
+.hero-tag::after{content:'';width:30px;height:1px;background:var(--r)}
+
+.hero-h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(3.5rem,9vw,9rem);
+  font-weight:900;
+  line-height:0.9;
+  letter-spacing:-0.02em;
+  margin-bottom:0.2em;
+  animation:fadeUp 0.8s 0.1s ease both;
+}
+.hero-h1 .line1{
+  display:block;
+  color:var(--text);
+  text-shadow:0 0 80px rgba(255,230,0,0.15);
+}
+.hero-h1 .line2{
+  display:block;
+  -webkit-text-stroke:2px var(--y);
+  color:transparent;
+  text-shadow:none;
+  position:relative;
+}
+.hero-h1 .line2::after{
+  content:attr(data-text);
+  position:absolute;left:0;top:0;
+  color:transparent;
+  -webkit-text-stroke:0;
+  background:linear-gradient(90deg,var(--y),var(--r));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:glitch 6s infinite;
+  opacity:0;
+}
+@keyframes glitch{
+  0%,94%,100%{opacity:0;transform:translate(0)}
+  95%{opacity:1;transform:translate(-4px,2px);filter:blur(0)}
+  96%{opacity:1;transform:translate(4px,-2px)}
+  97%{opacity:0}
+  98%{opacity:1;transform:translate(-2px,1px)}
+  99%{opacity:0}
+}
+
+.hero-h1 .line3{
+  display:block;
+  color:var(--r);
+  font-size:0.55em;
+  letter-spacing:0.08em;
+  text-shadow:0 0 40px rgba(255,0,60,0.4);
+}
+
+.hero-desc{
+  font-size:1.1rem;
+  color:var(--dim);
+  line-height:1.7;
+  max-width:520px;
+  margin:2rem 0 3rem;
+  border-left:2px solid var(--border2);
+  padding-left:1.5rem;
+  animation:fadeUp 0.8s 0.3s ease both;
+}
+
+.hero-btns{
+  display:flex;gap:1.5rem;flex-wrap:wrap;
+  animation:fadeUp 0.8s 0.45s ease both;
+}
+
+.btn-primary{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.72rem;font-weight:700;
+  letter-spacing:0.2em;
+  padding:16px 40px;
+  background:var(--y);
+  border:none;
+  color:#000;
+  text-transform:uppercase;
+  cursor:none;
+  position:relative;
+  overflow:hidden;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:transform 0.2s,box-shadow 0.3s;
+  text-decoration:none;
+  display:inline-block;
+}
+.btn-primary::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+  transform:translateX(-100%);
+  transition:transform 0.5s;
+}
+.btn-primary:hover{
+  box-shadow:0 0 40px rgba(255,230,0,0.5),0 0 80px rgba(255,230,0,0.2);
+  transform:translateY(-2px);
+}
+.btn-primary:hover::before{transform:translateX(100%)}
+
+.btn-secondary{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.72rem;font-weight:700;
+  letter-spacing:0.2em;
+  padding:15px 40px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text);
+  text-transform:uppercase;
+  cursor:none;
+  position:relative;
+  overflow:hidden;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:border-color 0.3s,color 0.3s,box-shadow 0.3s;
+  text-decoration:none;
+  display:inline-block;
+}
+.btn-secondary:hover{
+  border-color:var(--y);
+  color:var(--y);
+  box-shadow:0 0 20px rgba(255,230,0,0.15);
+}
+
+.hero-stats{
+  position:absolute;
+  right:6vw;top:50%;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:2.5rem;
+  z-index:10;
+  animation:fadeLeft 1s 0.6s ease both;
+}
+.stat{
+  text-align:right;
+  position:relative;
+}
+.stat::before{
+  content:'';
+  position:absolute;right:0;top:-12px;
+  width:40px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--y));
+}
+.stat-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:2.2rem;font-weight:900;
+  color:var(--y);
+  line-height:1;
+}
+.stat-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem;
+  color:var(--dim);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  margin-top:4px;
+}
+
+.scroll-indicator{
+  position:absolute;
+  bottom:40px;left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  animation:fadeUp 1s 1s ease both;
+}
+.scroll-line{
+  width:1px;height:60px;
+  background:linear-gradient(180deg,var(--y),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%{opacity:0;transform:scaleY(0);transform-origin:top}50%{opacity:1}100%{opacity:0;transform:scaleY(1);transform-origin:top}}
+.scroll-text{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.6rem;
+  color:var(--dim);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+}
+
+/* VISUAL PANEL - RIGHT SIDE HERO */
+.hero-visual{
+  position:absolute;
+  right:0;top:0;bottom:0;
+  width:45%;
+  z-index:5;
+  overflow:hidden;
+}
+.hero-visual::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--bg) 0%,transparent 30%);
+  z-index:2;
+}
+.hero-visual::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,var(--bg) 0%,transparent 20%,transparent 80%,var(--bg) 100%);
+  z-index:2;
+}
+.hero-img-container{
+  width:100%;height:100%;
+  position:relative;
+}
+.hero-img-main{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:saturate(0.7) contrast(1.2);
+  mix-blend-mode:screen;
+  opacity:0.6;
+}
+/* Cyberpunk city SVG background */
+.cyber-city{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+}
+
+/* SECTION SHARED */
+section{position:relative;overflow:hidden}
+.section-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem;
+  color:var(--r);
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--r)}
+
+.section-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(2rem,4.5vw,4.5rem);
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-0.02em;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeLeft{from{opacity:0;transform:translate(40px,-50%)}to{opacity:1;transform:translate(0,-50%)}}
+
+/* FEATURES */
+.features{
+  padding:140px 6vw;
+  background:var(--bg2);
+}
+.features-header{
+  max-width:700px;
+  margin-bottom:80px;
+}
+.features-title{margin-bottom:1rem}
+.features-title span{color:var(--y)}
+.features-sub{
+  font-size:1.05rem;
+  color:var(--dim);
+  line-height:1.7;
+  margin-top:1rem;
+}
+
+.features-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:1px;
+  background:var(--border);
+}
+.feat-card{
+  background:var(--bg2);
+  padding:48px 40px;
+  position:relative;
+  overflow:hidden;
+  transition:background 0.4s;
+  cursor:none;
+}
+.feat-card:hover{background:var(--bg3)}
+.feat-card::before{
+  content:'';
+  position:absolute;inset:0;
+  opacity:0;
+  transition:opacity 0.4s;
+}
+.feat-card:nth-child(1)::before{background:linear-gradient(135deg,rgba(255,230,0,0.06),transparent)}
+.feat-card:nth-child(2)::before{background:linear-gradient(135deg,rgba(255,0,60,0.06),transparent)}
+.feat-card:nth-child(3)::before{background:linear-gradient(135deg,rgba(255,230,0,0.06),transparent)}
+.feat-card:nth-child(4)::before{background:linear-gradient(135deg,rgba(255,0,60,0.06),transparent)}
+.feat-card:nth-child(5)::before{background:linear-gradient(135deg,rgba(255,230,0,0.06),transparent)}
+.feat-card:nth-child(6)::before{background:linear-gradient(135deg,rgba(255,0,60,0.06),transparent)}
+.feat-card:hover::before{opacity:1}
+
+.feat-card.featured{
+  grid-column:1 / 3;
+  background:var(--bg3);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+
+.feat-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.6rem;
+  color:var(--dim);
+  letter-spacing:0.3em;
+  margin-bottom:1.5rem;
+}
+.feat-icon{
+  width:48px;height:48px;
+  margin-bottom:1.5rem;
+  position:relative;
+}
+.feat-icon svg{width:100%;height:100%}
+
+.feat-card h3{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1rem;font-weight:700;
+  margin-bottom:0.8rem;
+  letter-spacing:0.02em;
+}
+.feat-card p{
+  font-size:0.95rem;
+  color:var(--dim);
+  line-height:1.7;
+}
+.feat-arrow{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:1.5rem;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  color:var(--y);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  text-decoration:none;
+  cursor:none;
+  transition:gap 0.3s;
+}
+.feat-card:hover .feat-arrow{gap:16px}
+.feat-arrow::after{content:'→';font-size:0.9rem}
+
+/* Featured card visual */
+.feat-visual{
+  position:relative;
+  height:260px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  background:var(--bg);
+}
+.feat-hud{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hud-ring{
+  width:140px;height:140px;
+  border:1px solid rgba(255,230,0,0.3);
+  border-radius:50%;
+  position:absolute;
+  animation:hudSpin 8s linear infinite;
+}
+.hud-ring:nth-child(2){
+  width:100px;height:100px;
+  border-color:rgba(255,0,60,0.4);
+  animation-direction:reverse;animation-duration:5s;
+}
+.hud-ring:nth-child(3){
+  width:60px;height:60px;
+  border-color:rgba(255,230,0,0.5);
+  animation-duration:3s;
+}
+.hud-core{
+  width:20px;height:20px;
+  background:var(--y);
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  box-shadow:0 0 20px var(--y),0 0 40px rgba(255,230,0,0.5);
+  animation:corePulse 2s ease-in-out infinite;
+}
+@keyframes hudSpin{to{transform:rotate(360deg) scale(1.02)}from{transform:rotate(0deg)}}
+@keyframes corePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.hud-data{
+  position:absolute;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.6rem;
+  color:rgba(255,230,0,0.6);
+  letter-spacing:0.1em;
+  animation:dataFlicker 3s ease-in-out infinite;
+}
+.hud-data.top{top:20px;left:20px}
+.hud-data.bottom{bottom:20px;right:20px;text-align:right}
+@keyframes dataFlicker{0%,100%{opacity:0.6}40%{opacity:1}60%{opacity:0.4}80%{opacity:0.9}}
+
+/* SHOWCASE */
+.showcase{
+  padding:140px 6vw;
+  background:var(--bg);
+  position:relative;
+}
+.showcase::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--y),transparent);
+}
+
+.showcase-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+  margin-top:80px;
+}
+
+.showcase-left .section-title{margin-bottom:2rem}
+.showcase-left .section-title .accent{
+  -webkit-text-stroke:1.5px var(--y);
+  color:transparent;
+}
+
+.showcase-tabs{
+  display:flex;gap:0;
+  margin:2rem 0;
+  border-bottom:1px solid var(--border);
+}
+.tab{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  padding:12px 24px;
+  background:transparent;
+  border:none;
+  color:var(--dim);
+  cursor:none;
+  transition:color 0.3s;
+  position:relative;
+}
+.tab::after{
+  content:'';
+  position:absolute;bottom:-1px;left:0;width:0;height:2px;
+  background:var(--y);
+  transition:width 0.3s;
+}
+.tab.active{color:var(--y)}
+.tab.active::after{width:100%}
+.tab:hover{color:var(--text)}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+.tab-content p{
+  font-size:1rem;
+  color:var(--dim);
+  line-height:1.8;
+  margin-bottom:1.5rem;
+}
+
+.showcase-right{
+  position:relative;
+}
+.showcase-panel{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  padding:0;
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:4/3;
+}
+.showcase-panel::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:32px;
+  background:rgba(255,230,0,0.05);
+  border-bottom:1px solid var(--border);
+  z-index:2;
+}
+.panel-bar{
+  position:absolute;top:10px;left:16px;
+  display:flex;gap:6px;z-index:3;
+}
+.panel-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+}
+.panel-dot:nth-child(1){background:var(--r)}
+.panel-dot:nth-child(2){background:var(--y)}
+.panel-dot:nth-child(3){background:rgba(255,255,255,0.2)}
+.panel-title-bar{
+  position:absolute;top:8px;left:50%;
+  transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.6rem;
+  color:var(--dim);
+  letter-spacing:0.2em;
+  z-index:3;
+}
+
+/* CITY SKYLINE ANIMATION */
+.city-anim{
+  position:absolute;inset:32px 0 0;
+  overflow:hidden;
+}
+.city-bg{
+  width:100%;height:100%;
+  background:linear-gradient(180deg,#050510 0%,#0a0020 60%,#200010 100%);
+}
+.building{
+  position:absolute;bottom:0;
+  background:linear-gradient(180deg,#111120,#080810);
+}
+.building::after{
+  content:'';
+  position:absolute;top:0;left:50%;
+  transform:translateX(-50%);
+  width:2px;height:4px;
+  background:var(--r);
+  box-shadow:0 0 6px var(--r);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.window{
+  position:absolute;
+  background:rgba(255,230,0,0.7);
+  box-shadow:0 0 4px rgba(255,230,0,0.5);
+  animation:winFlicker 4s ease-in-out infinite;
+}
+@keyframes winFlicker{0%,100%{opacity:0.7}30%{opacity:0.2}60%{opacity:1}}
+
+/* Neon signs on buildings */
+.neon-sign{
+  position:absolute;
+  font-family:'Orbitron',sans-serif;
+  font-size:0.5rem;
+  letter-spacing:0.1em;
+  animation:neonGlow 3s ease-in-out infinite;
+}
+@keyframes neonGlow{
+  0%,100%{text-shadow:0 0 5px currentColor,0 0 10px currentColor}
+  50%{text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 0 40px currentColor}
+}
+
+/* Rain effect */
+.rain-container{
+  position:absolute;inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.raindrop{
+  position:absolute;
+  width:1px;
+  background:linear-gradient(180deg,transparent,rgba(100,150,255,0.4));
+  animation:fall linear infinite;
+}
+@keyframes fall{0%{transform:translateY(-100px)}100%{transform:translateY(110%)}}
+
+/* STATS BAND */
+.stats-band{
+  padding:60px 6vw;
+  background:var(--bg3);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background-image:linear-gradient(var(--border),var(--border));
+  background-size:1px 100%;
+  background-repeat:no-repeat;
+  background-position:25%;
+}
+.band-stat{
+  padding:0 40px;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;
+}
+.band-stat::after{
+  content:'';
+  position:absolute;right:0;top:0;bottom:0;
+  width:1px;
+  background:var(--border);
+}
+.band-stat:last-child::after{display:none}
+.band-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:3rem;font-weight:900;
+  color:var(--y);
+  line-height:1;
+}
+.band-num span{color:var(--r)}
+.band-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem;
+  color:var(--dim);
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+}
+.band-desc{
+  font-size:0.85rem;
+  color:var(--dim);
+  margin-top:4px;
+}
+
+/* CTA SECTION */
+.cta-section{
+  padding:160px 6vw;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+.cta-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%,rgba(255,0,60,0.08),transparent),
+    radial-gradient(ellipse 40% 40% at 20% 80%,rgba(255,230,0,0.06),transparent);
+}
+.cta-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,230,0,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,230,0,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.cta-inner{
+  position:relative;z-index:2;
+  text-align:center;
+  max-width:800px;
+  margin:0 auto;
+}
+.cta-eyebrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  color:var(--r);
+  letter-spacing:0.5em;
+  text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+.cta-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(2.5rem,6vw,6rem);
+  font-weight:900;
+  line-height:1;
+  margin-bottom:2rem;
+}
+.cta-title .y{color:var(--y);text-shadow:0 0 40px rgba(255,230,0,0.3)}
+.cta-title .r{
+  -webkit-text-stroke:2px var(--r);
+  color:transparent;
+}
+.cta-sub{
+  font-size:1.1rem;
+  color:var(--dim);
+  line-height:1.7;
+  margin-bottom:3rem;
+  max-width:520px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.cta-btns{
+  display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;
+}
+
+/* INPUT FIELD */
+.cta-form{
+  display:flex;gap:0;
+  max-width:500px;
+  margin:0 auto 3rem;
+}
+.cta-input{
+  flex:1;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-right:none;
+  padding:16px 20px;
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.8rem;
+  letter-spacing:0.05em;
+  outline:none;
+  transition:border-color 0.3s,background 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,100% 100%,0% 100%);
+}
+.cta-input:focus{
+  border-color:var(--y);
+  background:rgba(255,230,0,0.04);
+}
+.cta-input::placeholder{color:var(--dim)}
+.cta-form .btn-primary{clip-path:polygon(0% 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)}
+
+/* COUNTDOWN */
+.countdown{
+  display:flex;gap:2rem;justify-content:center;
+  margin:3rem 0;
+}
+.count-unit{
+  text-align:center;
+}
+.count-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:3rem;font-weight:900;
+  color:var(--text);
+  line-height:1;
+  min-width:70px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  padding:12px;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.count-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.6rem;
+  color:var(--dim);
+  letter-spacing:0.3em;
+  margin-top:6px;
+  text-transform:uppercase;
+}
+.count-sep{
+  font-family:'Orbitron',sans-serif;
+  font-size:3rem;
+  color:var(--r);
+  line-height:1.2;
+  align-self:flex-start;
+}
+
+/* FOOTER */
+footer{
+  padding:80px 6vw 40px;
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+}
+.footer-top{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:60px;
+  margin-bottom:60px;
+}
+.footer-brand .logo-text{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.3rem;font-weight:900;
+  color:var(--y);
+  letter-spacing:0.3em;
+  margin-bottom:1rem;
+}
+.footer-brand p{
+  font-size:0.9rem;
+  color:var(--dim);
+  line-height:1.7;
+  max-width:280px;
+}
+.footer-col h4{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.65rem;font-weight:700;
+  color:var(--text);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  margin-bottom:1.5rem;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.75rem;
+  color:var(--dim);
+  text-decoration:none;
+  letter-spacing:0.05em;
+  transition:color 0.2s;
+  cursor:none;
+}
+.footer-col a:hover{color:var(--y)}
+
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:30px;
+  border-top:1px solid var(--border);
+}
+.footer-copy{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem;
+  color:var(--dim);
+  letter-spacing:0.1em;
+}
+.footer-socials{
+  display:flex;gap:1rem;
+}
+.social-btn{
+  width:36px;height:36px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:none;
+  transition:border-color 0.3s,background 0.3s;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  text-decoration:none;
+  color:var(--dim);
+  font-size:0.8rem;
+  font-family:'Share Tech Mono',monospace;
+}
+.social-btn:hover{
+  border-color:var(--y);
+  background:rgba(255,230,0,0.08);
+  color:var(--y);
+}
+
+/* PROGRESS BARS */
+.progress-list{display:flex;flex-direction:column;gap:16px;margin-top:2rem}
+.progress-item{
+  display:flex;flex-direction:column;gap:6px;
+}
+.progress-meta{
+  display:flex;justify-content:space-between;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem;
+  color:var(--dim);
+  letter-spacing:0.1em;
+}
+.progress-track{
+  height:3px;
+  background:rgba(255,255,255,0.05);
+  position:relative;
+  overflow:hidden;
+}
+.progress-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,var(--r),var(--y));
+  transform-origin:left;
+  animation:fillBar 2s ease-out both;
+}
+@keyframes fillBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ANIMATED TICKER */
+.ticker-wrap{
+  background:var(--r);
+  padding:10px 0;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.ticker{
+  display:inline-block;
+  animation:ticker 20s linear infinite;
+}
+.ticker-item{
+  display:inline-block;
+  font-family:'Orbitron',sans-serif;
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:#000;
+  padding:0 3rem;
+}
+.ticker-item::before{content:'◆  ';color:rgba(0,0,0,0.4)}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SCROLL ANIMATIONS */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-stats{display:none}
+  .hero-visual{width:60%;opacity:0.4}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .feat-card.featured{grid-column:1/3;grid-template-columns:1fr}
+  .showcase-layout{grid-template-columns:1fr}
+  .stats-band{grid-template-columns:1fr 1fr;gap:30px}
+  .band-stat{padding:0 20px}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+@media(max-width:600px){
+  .features-grid{grid-template-columns:1fr}
+  .feat-card.featured{grid-column:1}
+  .stats-band{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr}
+  .cta-form{flex-direction:column}
+  .cta-input{clip-path:polygon(8px 0%,calc(100% - 8px) 0%,100% 100%,0% 100%)}
+  .cta-form .btn-primary{clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">Night City Nexus</span>
+    <span class="ticker-item">System Online</span>
+    <span class="ticker-item">v2.077 Active</span>
+    <span class="ticker-item">Neural Link Established</span>
+    <span class="ticker-item">Threat Level: Nominal</span>
+    <span class="ticker-item">Night City Nexus</span>
+    <span class="ticker-item">System Online</span>
+    <span class="ticker-item">v2.077 Active</span>
+    <span class="ticker-item">Neural Link Established</span>
+    <span class="ticker-item">Threat Level: Nominal</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">NEXUS</div>
+  <ul class="nav-links">
+    <li><a href="#">Systems</a></li>
+    <li><a href="#">Network</a></li>
+    <li><a href="#">Implants</a></li>
+    <li><a href="#">Archive</a></li>
+  </ul>
+  <button class="nav-cta"><span>Jack In</span></button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- HUD corners -->
+  <div class="hud-corner tl"></div>
+  <div class="hud-corner tr"></div>
+  <div class="hud-corner bl"></div>
+  <div class="hud-corner br"></div>
+
+  <!-- HUD data labels -->
+  <div style="position:absolute;top:90px;left:56px;font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:rgba(255,230,0,0.5);letter-spacing:0.2em;line-height:1.8;z-index:10">
+    SYS: ACTIVE<br>LOC: NIGHT CITY<br>LAT: 37.7749° N
+  </div>
+  <div style="position:absolute;top:90px;right:56px;font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:rgba(255,0,60,0.5);letter-spacing:0.2em;line-height:1.8;text-align:right;z-index:10">
+    THREAT: 02%<br>NEURAL: SYNC<br>CORP: FREE
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Neural Interface // v2.077</div>
+    <h1 class="hero-h1">
+      <span class="line1">BREAK</span>
+      <span class="line2" data-text="THE SYSTEM">THE SYSTEM</span>
+      <span class="line3">Night City Never Sleeps</span>
+    </h1>
+    <p class="hero-desc">
+      The future runs on chrome and circuitry. Plug in. Jack up. 
+      Leave the old world behind. NEXUS is the operating layer 
+      between flesh and the machine.
+    </p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary">Enter The Grid</a>
+      <a href="#" class="btn-secondary">Watch Uplink</a>
+    </div>
+  </div>
+
+  <!-- Stats column -->
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2.1M</div>
+      <div class="stat-label">Jacked In</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">99.7%</div>
+      <div class="stat-label">Uptime</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0.2ms</div>
+      <div class="stat-label">Latency</div>
+    </div>
+  </div>
+
+  <!-- Animated city visual on right -->
+  <div class="hero-visual">
+    <div class="hero-img-container">
+      <!-- Inline SVG city -->
+      <svg class="cyber-city" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#010015"/>
+            <stop offset="40%" stop-color="#040025"/>
+            <stop offset="80%" stop-color="#120008"/>
+            <stop offset="100%" stop-color="#0a0000"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="bigGlow">
+            <feGaussianBlur stdDeviation="8" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="800" height="900" fill="url(#skyGrad)"/>
+        <!-- Stars -->
+        <g opacity="0.6">
+          <circle cx="100" cy="80" r="1" fill="#fff" opacity="0.8"/>
+          <circle cx="250" cy="50" r="0.7" fill="#fff" opacity="0.6"/>
+          <circle cx="400" cy="90" r="1.2" fill="#fff" opacity="0.9"/>
+          <circle cx="600" cy="60" r="0.8" fill="#fff" opacity="0.7"/>
+          <circle cx="700" cy="100" r="1" fill="#fff" opacity="0.5"/>
+          <circle cx="50" cy="120" r="0.6" fill="#fff" opacity="0.8"/>
+          <circle cx="350" cy="30" r="1" fill="#fff" opacity="0.7"/>
+          <circle cx="520" cy="120" r="0.8" fill="#aaf" opacity="0.6"/>
+          <circle cx="160" cy="45" r="0.9" fill="#ffa" opacity="0.7"/>
+        </g>
+        <!-- Moon / corp logo -->
+        <circle cx="680" cy="120" r="50" fill="none" stroke="rgba(255,0,60,0.15)" stroke-width="1"/>
+        <circle cx="680" cy="120" r="38" fill="rgba(10,0,20,0.9)" stroke="rgba(255,0,60,0.25)" stroke-width="0.5"/>
+        <text x="680" y="126" text-anchor="middle" font-family="Orbitron" font-size="14" fill="rgba(255,0,60,0.6)" letter-spacing="3">ARASAKA</text>
+        <!-- Buildings back -->
+        <rect x="0" y="500" width="60" height="400" fill="#0c0c18"/>
+        <rect x="50" y="400" width="80" height="500" fill="#0f0f20"/>
+        <rect x="120" y="450" width="50" height="450" fill="#0a0a15"/>
+        <rect x="160" y="350" width="100" height="550" fill="#111125"/>
+        <rect x="250" y="420" width="70" height="480" fill="#0d0d1e"/>
+        <rect x="310" y="300" width="120" height="600" fill="#131330"/>
+        <rect x="420" y="380" width="80" height="520" fill="#0f0f22"/>
+        <rect x="490" y="450" width="60" height="450" fill="#0c0c18"/>
+        <rect x="540" y="320" width="140" height="580" fill="#111128"/>
+        <rect x="670" y="400" width="90" height="500" fill="#0e0e20"/>
+        <rect x="750" y="350" width="60" height="550" fill="#0c0c18"/>
+        <!-- Mega skyscraper center -->
+        <rect x="310" y="150" width="120" height="750" fill="#0a0a18"/>
+        <rect x="330" y="120" width="80" height="780" fill="#0d0d1e"/>
+        <rect x="350" y="80" width="40" height="820" fill="#111125"/>
+        <!-- Skyscraper windows -->
+        <g filter="url(#glow)">
+          <rect x="338" y="140" width="4" height="4" fill="#FFE600" opacity="0.8"/>
+          <rect x="348" y="140" width="4" height="4" fill="#FFE600" opacity="0.6"/>
+          <rect x="358" y="140" width="4" height="4" fill="#FFE600" opacity="0.9"/>
+          <rect x="338" y="156" width="4" height="4" fill="#FFE600" opacity="0.4"/>
+          <rect x="358" y="156" width="4" height="4" fill="#FFE600" opacity="0.7"/>
+          <rect x="338" y="172" width="4" height="4" fill="rgba(255,230,0,0.3)"/>
+          <rect x="348" y="172" width="4" height="4" fill="rgba(255,230,0,0.8)"/>
+          <rect x="338" y="200" width="4" height="4" fill="rgba(255,0,60,0.7)"/>
+          <rect x="358" y="200" width="4" height="4" fill="rgba(255,0,60,0.5)"/>
+          <rect x="338" y="216" width="4" height="4" fill="#FFE600" opacity="0.9"/>
+          <rect x="358" y="216" width="4" height="4" fill="#FFE600" opacity="0.5"/>
+        </g>
+        <!-- Neon lights on buildings -->
+        <rect x="160" y="370" width="60" height="3" fill="#FF003C" opacity="0.8" filter="url(#bigGlow)"/>
+        <rect x="160" y="374" width="60" height="1" fill="#FF003C" opacity="0.4"/>
+        <rect x="540" y="340" width="80" height="3" fill="#FFE600" opacity="0.9" filter="url(#bigGlow)"/>
+        <rect x="540" y="344" width="80" height="1" fill="#FFE600" opacity="0.4"/>
+        <rect x="310" y="320" width="50" height="2" fill="#FF003C" opacity="0.7" filter="url(#glow)"/>
+        <!-- Holographic billboard -->
+        <rect x="420" y="300" width="80" height="50" fill="rgba(0,200,255,0.05)" stroke="rgba(0,200,255,0.3)" stroke-width="1"/>
+        <text x="460" y="322" text-anchor="middle" font-family="Orbitron" font-size="8" fill="rgba(0,200,255,0.6)" letter-spacing="1">MILITECH</text>
+        <text x="460" y="336" text-anchor="middle" font-family="Orbitron" font-size="6" fill="rgba(0,200,255,0.4)" letter-spacing="2">CORP ZONE</text>
+        <!-- Red billboard -->
+        <rect x="170" y="280" width="90" height="60" fill="rgba(255,0,60,0.08)" stroke="rgba(255,0,60,0.4)" stroke-width="1"/>
+        <text x="215" y="308" text-anchor="middle" font-family="Orbitron" font-size="9" fill="rgba(255,0,60,0.8)" letter-spacing="1">NEXUS</text>
+        <text x="215" y="323" text-anchor="middle" font-family="Orbitron" font-size="6" fill="rgba(255,0,60,0.5)" letter-spacing="3">SYSTEM</text>
+        <!-- Flying vehicles -->
+        <g filter="url(#glow)">
+          <ellipse cx="200" cy="250" rx="12" ry="4" fill="#FFE600" opacity="0.7"/>
+          <line x1="188" y1="250" x2="180" y2="254" stroke="#FFE600" stroke-width="1" opacity="0.5"/>
+          <line x1="212" y1="250" x2="220" y2="254" stroke="#FFE600" stroke-width="1" opacity="0.5"/>
+          <ellipse cx="600" cy="200" rx="10" ry="3" fill="rgba(255,0,60,0.8)"/>
+          <ellipse cx="500" cy="280" rx="8" ry="3" fill="rgba(255,230,0,0.6)"/>
+        </g>
+        <!-- Ground level glow -->
+        <rect x="0" y="840" width="800" height="60" fill="rgba(255,0,60,0.05)"/>
+        <line x1="0" y1="840" x2="800" y2="840" stroke="rgba(255,0,60,0.2)" stroke-width="1"/>
+        <!-- Street lights -->
+        <line x1="100" y1="840" x2="100" y2="760" stroke="rgba(255,230,0,0.1)" stroke-width="1"/>
+        <circle cx="100" cy="758" r="3" fill="rgba(255,230,0,0.5)" filter="url(#glow)"/>
+        <line x1="300" y1="840" x2="300" y2="760" stroke="rgba(255,230,0,0.1)" stroke-width="1"/>
+        <circle cx="300" cy="758" r="3" fill="rgba(255,230,0,0.5)" filter="url(#glow)"/>
+        <line x1="500" y1="840" x2="500" y2="760" stroke="rgba(255,230,0,0.1)" stroke-width="1"/>
+        <circle cx="500" cy="758" r="3" fill="rgba(255,230,0,0.5)" filter="url(#glow)"/>
+        <line x1="700" y1="840" x2="700" y2="760" stroke="rgba(255,230,0,0.1)" stroke-width="1"/>
+        <circle cx="700" cy="758" r="3" fill="rgba(255,230,0,0.5)" filter="url(#glow)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-header reveal">
+    <div class="section-label">Core Systems</div>
+    <h2 class="section-title features-title">
+      ENGINEERED FOR THE<br><span>CHROME AGE</span>
+    </h2>
+    <p class="features-sub">Where flesh ends and silicon begins — NEXUS bridges the gap with bleeding-edge neural architecture designed for the streets of tomorrow.</p>
+  </div>
+
+  <div class="features-grid reveal">
+    <!-- Featured large card -->
+    <div class="feat-card featured">
+      <div>
+        <div class="feat-num">01 // CORE</div>
+        <h3>Neural Interface Protocol</h3>
+        <p>Direct cortex-to-system connection with sub-millisecond response. Your thoughts become commands. No lag. No mercy.</p>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="progress-meta"><span>REACTION TIME</span><span>0.2ms</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:95%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span>BANDWIDTH</span><span>10TB/s</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:88%;animation-delay:0.3s"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span>ENCRYPTION</span><span>QUANTUM</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:100%;animation-delay:0.6s"></div></div>
+          </div>
+        </div>
+        <a href="#" class="feat-arrow">Explore Protocol</a>
+      </div>
+      <div class="feat-visual">
+        <div class="feat-hud">
+          <div class="hud-ring"></div>
+          <div class="hud-ring"></div>
+          <div class="hud-ring"></div>
+          <div class="hud-core"></div>
+        </div>
+        <div class="hud-data top">SYS.CORTEX_LINK<br>PING: 0.18ms<br>NODES: 2,847</div>
+        <div class="hud-data bottom">BANDWIDTH: 9.8TB/s<br>ENCRYPT: ACTIVE<br>STATUS: NOMINAL</div>
+      </div>
+    </div>
+
+    <!-- Small card -->
+    <div class="feat-card">
+      <div class="feat-num">02 // GHOST</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M8 40L4 44M8 40L4 44" stroke="rgba(255,0,60,0.3)" stroke-width="2"/>
+          <rect x="6" y="20" width="36" height="24" rx="0" stroke="#FF003C" stroke-width="1.5" fill="rgba(255,0,60,0.05)"/>
+          <path d="M6 24h36" stroke="#FF003C" stroke-width="0.5" opacity="0.5"/>
+          <path d="M18 8v12M30 8v12" stroke="#FF003C" stroke-width="1.5"/>
+          <rect x="20" y="4" width="8" height="4" fill="#FF003C" opacity="0.7"/>
+          <circle cx="16" cy="30" r="3" fill="#FF003C" opacity="0.8"/>
+          <circle cx="24" cy="30" r="3" fill="rgba(255,0,60,0.4)"/>
+          <circle cx="32" cy="30" r="3" fill="rgba(255,0,60,0.2)"/>
+        </svg>
+      </div>
+      <h3>Ghost Protocol</h3>
+      <p>Become invisible to corp surveillance. Military-grade ICE bypass algorithms that leave zero traces in the net.</p>
+      <a href="#" class="feat-arrow">Go Dark</a>
+    </div>
+
+    <!-- Small card -->
+    <div class="feat-card">
+      <div class="feat-num">03 // STRIKE</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <polygon points="24,4 44,24 24,44 4,24" stroke="#FFE600" stroke-width="1.5" fill="rgba(255,230,0,0.05)"/>
+          <polygon points="24,12 36,24 24,36 12,24" stroke="#FFE600" stroke-width="1" fill="rgba(255,230,0,0.08)" opacity="0.6"/>
+          <circle cx="24" cy="24" r="4" fill="#FFE600"/>
+          <line x1="24" y1="4" x2="24" y2="44" stroke="#FFE600" stroke-width="0.5" opacity="0.3"/>
+          <line x1="4" y1="24" x2="44" y2="24" stroke="#FFE600" stroke-width="0.5" opacity="0.3"/>
+        </svg>
+      </div>
+      <h3>Precision Strike</h3>
+      <p>Surgical offensive capabilities. Breach any system, crack any encryption. Corp walls are just suggestions.</p>
+      <a href="#" class="feat-arrow">Arm Up</a>
+    </div>
+
+    <!-- Small card -->
+    <div class="feat-card">
+      <div class="feat-num">04 // CHROME</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4z" stroke="#FFE600" stroke-width="1.5" fill="none"/>
+          <path d="M24 4C13 4 4 13 4 24" stroke="#FF003C" stroke-width="2"/>
+          <circle cx="24" cy="24" r="8" stroke="#FFE600" stroke-width="1.5" fill="rgba(255,230,0,0.05)"/>
+          <line x1="24" y1="4" x2="24" y2="16" stroke="#FFE600" stroke-width="1.5"/>
+          <line x1="24" y1="32" x2="24" y2="44" stroke="#FFE600" stroke-width="1.5"/>
+          <line x1="4" y1="24" x2="16" y2="24" stroke="#FFE600" stroke-width="1.5"/>
+          <line x1="32" y1="24" x2="44" y2="24" stroke="#FFE600" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <h3>Chrome Augments</h3>
+      <p>Full body modification registry. Track, upgrade, and manage your chrome. Exceed human limitations.</p>
+      <a href="#" class="feat-arrow">Get Chromed</a>
+    </div>
+
+    <!-- Small card -->
+    <div class="feat-card">
+      <div class="feat-num">05 // CRED</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="4" y="12" width="40" height="28" stroke="rgba(255,0,60,0.8)" stroke-width="1.5" fill="rgba(255,0,60,0.05)"/>
+          <rect x="4" y="12" width="40" height="8" fill="rgba(255,0,60,0.15)"/>
+          <rect x="8" y="28" width="16" height="2" fill="#FF003C" opacity="0.6"/>
+          <rect x="8" y="33" width="10" height="2" fill="rgba(255,0,60,0.4)"/>
+          <rect x="32" y="26" width="8" height="10" rx="0" fill="none" stroke="#FF003C" stroke-width="1"/>
+          <circle cx="36" cy="31" r="2" fill="#FF003C" opacity="0.7"/>
+        </svg>
+      </div>
+      <h3>Eurodollar Vault</h3>
+      <p>Untraceable digital currency storage. Off-corp financial grid. Your eddies, your rules, no corpo oversight.</p>
+      <a href="#" class="feat-arrow">Open Account</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band reveal">
+  <div class="band-stat">
+    <div class="band-num">2.1<span>M</span></div>
+    <div class="band-label">Active Users</div>
+    <div class="band-desc">Across all districts of Night City</div>
+  </div>
+  <div class="band-stat">
+    <div class="band-num">99<span>.7%</span></div>
+    <div class="band-label">Uptime</div>
+    <div class="band-desc">Zero corp interference, guaranteed</div>
+  </div>
+  <div class="band-stat">
+    <div class="band-num">0.2<span>ms</span></div>
+    <div class="band-label">Response</div>
+    <div class="band-desc">Faster than human reaction time</div>
+  </div>
+  <div class="band-stat">
+    <div class="band-num">∞<span></span></div>
+    <div class="band-label">Possibilities</div>
+    <div class="band-desc">The net is yours to conquer</div>
+  </div>
+</div>
+
+<!-- SHOWCASE -->
+<section class="showcase" id="showcase">
+  <div class="showcase-layout">
+    <div class="showcase-left reveal">
+      <div class="section-label">Live Environment</div>
+      <h2 class="section-title">
+        SEE THE<br><span class="accent">FUTURE</span><br>RUN
+      </h2>
+      <div class="showcase-tabs">
+        <button class="tab active" onclick="switchTab(this,'t1')">Netrun</button>
+        <button class="tab" onclick="switchTab(this,'t2')">Combat</button>
+        <button class="tab" onclick="switchTab(this,'t3')">Intel</button>
+      </div>
+      <div id="t1" class="tab-content active">
+        <p>Drop into the net and experience full sensory immersion. Navigate data fortresses, crack encryption nodes, and extract corporate secrets while your body stays safe in the physical world.</p>
+        <p>Real-time threat mapping keeps you one step ahead of counter-ICE programs.</p>
+      </div>
+      <div id="t2" class="tab-content">
+        <p>Cybernetic combat enhancement with sub-millisecond targeting assistance. Street samurai to full-chrome soldier — NEXUS adapts to your combat style and amplifies your instincts.</p>
+        <p>Integrated threat assessment processes 400 variables per second.</p>
+      </div>
+      <div id="t3" class="tab-content">
+        <p>Intelligence gathering through city-wide sensor networks. Corporate communication intercepts, fixers' private channels, and law enforcement frequencies — all in one feed.</p>
+        <p>Night City never had secrets. Now you can hear all of them.</p>
+      </div>
+      <div style="margin-top:2rem">
+        <a href="#" class="btn-primary">Launch System</a>
+      </div>
+    </div>
+
+    <div class="showcase-right reveal" style="transition-delay:0.2s">
+      <div class="showcase-panel">
+        <div class="panel-bar">
+          <div class="panel-dot"></div>
+          <div class="panel-dot"></div>
+          <div class="panel-dot"></div>
+        </div>
+        <div class="panel-title-bar">NEXUS.OS // LIVE FEED</div>
+
+        <!-- City animation -->
+        <div class="city-anim">
+          <div class="city-bg"></div>
+          <div class="rain-container" id="rain"></div>
+          <!-- Static buildings via absolute positioned divs -->
+          <div style="position:absolute;bottom:0;left:0;width:40px;height:200px;background:#0a0a15;border-right:1px solid rgba(255,230,0,0.05)"></div>
+          <div style="position:absolute;bottom:0;left:35px;width:60px;height:280px;background:#0d0d1e"></div>
+          <div style="position:absolute;bottom:0;left:88px;width:35px;height:180px;background:#080810"></div>
+          <div style="position:absolute;bottom:0;left:115px;width:80px;height:350px;background:#111125">
+            <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:6px;background:#FF003C;box-shadow:0 0 8px #FF003C;animation:blink 1.8s infinite"></div>
+          </div>
+          <div style="position:absolute;bottom:0;left:188px;width:50px;height:250px;background:#0c0c1a"></div>
+          <div style="position:absolute;bottom:0;left:230px;width:100px;height:400px;background:#0f0f20">
+            <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:6px;background:#FFE600;box-shadow:0 0 8px #FFE600;animation:blink 2.3s infinite"></div>
+            <!-- neon line on building -->
+            <div style="position:absolute;top:10px;left:0;right:0;height:2px;background:#FF003C;box-shadow:0 0 10px #FF003C,0 0 20px rgba(255,0,60,0.4)"></div>
+          </div>
+          <div style="position:absolute;bottom:0;left:322px;width:40px;height:200px;background:#090914"></div>
+          <div style="position:absolute;bottom:0;left:355px;width:70px;height:320px;background:#0e0e22"></div>
+          <div style="position:absolute;bottom:0;left:418px;width:55px;height:260px;background:#0b0b18">
+            <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:5px;background:#FF003C;box-shadow:0 0 6px #FF003C;animation:blink 1.5s infinite"></div>
+          </div>
+          <div style="position:absolute;bottom:0;left:466px;width:100px;height:380px;background:#111128">
+            <div style="position:absolute;top:8px;left:0;right:0;height:2px;background:#FFE600;box-shadow:0 0 10px #FFE600"></div>
+          </div>
+          <div style="position:absolute;bottom:0;left:558px;width:45px;height:220px;background:#0a0a15"></div>
+
+          <!-- Window lights on buildings -->
+          <div style="position:absolute;bottom:180px;left:125px;width:4px;height:4px;background:rgba(255,230,0,0.7);box-shadow:0 0 4px rgba(255,230,0,0.5)"></div>
+          <div style="position:absolute;bottom:165px;left:135px;width:4px;height:4px;background:rgba(255,230,0,0.5);box-shadow:0 0 4px rgba(255,230,0,0.3)"></div>
+          <div style="position:absolute;bottom:200px;left:145px;width:4px;height:4px;background:rgba(255,0,60,0.7);box-shadow:0 0 4px rgba(255,0,60,0.5)"></div>
+          <div style="position:absolute;bottom:200px;left:245px;width:4px;height:4px;background:rgba(255,230,0,0.8)"></div>
+          <div style="position:absolute;bottom:185px;left:255px;width:4px;height:4px;background:rgba(255,230,0,0.5)"></div>
+          <div style="position:absolute;bottom:220px;left:265px;width:4px;height:4px;background:rgba(255,0,60,0.6)"></div>
+          <div style="position:absolute;bottom:160px;left:370px;width:4px;height:4px;background:rgba(255,230,0,0.7)"></div>
+          <div style="position:absolute;bottom:175px;left:385px;width:4px;height:4px;background:rgba(255,0,60,0.5)"></div>
+          <div style="position:absolute;bottom:190px;left:480px;width:4px;height:4px;background:rgba(255,230,0,0.8)"></div>
+          <div style="position:absolute;bottom:210px;left:495px;width:4px;height:4px;background:rgba(255,230,0,0.4)"></div>
+
+          <!-- HUD overlay on showcase panel -->
+          <div style="position:absolute;top:12px;left:12px;font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:rgba(255,230,0,0.5);line-height:2;letter-spacing:0.1em">
+            ■ CAM_07 ACTIVE<br>□ THREAT: LOW<br>■ MOTION DETECTED
+          </div>
+          <div style="position:absolute;bottom:12px;right:12px;font-family:'Share Tech Mono',monospace;font-size:0.5rem;color:rgba(255,0,60,0.5);line-height:1.8;text-align:right;letter-spacing:0.1em">
+            LAT: 37.7749<br>LNG: -122.41<br>ALT: 284m
+          </div>
+
+          <!-- scan line on panel -->
+          <div id="scanBar" style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,230,0,0.3),transparent);top:50%;animation:panelScan 4s linear infinite"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section" id="cta">
+  <div class="cta-bg"></div>
+  <div class="cta-grid"></div>
+  <div class="cta-inner reveal">
+    <div class="cta-eyebrow">// Limited Access — Join the Resistance</div>
+    <h2 class="cta-title">
+      <span class="y">JACK</span><br>
+      <span class="r">INTO THE</span><br>
+      <span class="y">FUTURE</span>
+    </h2>
+    <p class="cta-sub">Early access is closing. 847 slots remaining. Once they're gone, you're corp property. Your call, chooms.</p>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown">
+      <div class="count-unit">
+        <div class="count-num" id="cd-h">14</div>
+        <div class="count-label">Hours</div>
+      </div>
+      <div class="count-sep">:</div>
+      <div class="count-unit">
+        <div class="count-num" id="cd-m">37</div>
+        <div class="count-label">Min</div>
+      </div>
+      <div class="count-sep">:</div>
+      <div class="count-unit">
+        <div class="count-num" id="cd-s">52</div>
+        <div class="count-label">Sec</div>
+      </div>
+    </div>
+
+    <div class="cta-form">
+      <input type="text" class="cta-input" placeholder="ENTER NEURAL ID // EMAIL">
+      <button class="btn-primary"><span>JACK IN</span></button>
+    </div>
+
+    <div class="cta-btns">
+      <a href="#" class="btn-secondary">Learn More</a>
+      <a href="#" class="btn-secondary">View Roadmap</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo-text">// NEXUS</div>
+      <p>The operating system of the streets. Built by edgerunners, for edgerunners. Night City is ours.</p>
+      <div style="margin-top:1.5rem;display:flex;gap:1rem;align-items:center">
+        <div style="width:8px;height:8px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px #00FF88;animation:corePulse 2s ease-in-out infinite"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:rgba(0,255,136,0.7);letter-spacing:0.1em">SYSTEMS ONLINE — v2.077.4</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Systems</h4>
+      <ul>
+        <li><a href="#">Neural Link</a></li>
+        <li><a href="#">Ghost Protocol</a></li>
+        <li><a href="#">Chrome Registry</a></li>
+        <li><a href="#">ICE Bypass</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Districts</h4>
+      <ul>
+        <li><a href="#">Watson</a></li>
+        <li><a href="#">Westbrook</a></li>
+        <li><a href="#">City Center</a></li>
+        <li><a href="#">Heywood</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Corp Zone</h4>
+      <ul>
+        <li><a href="#">About NEXUS</a></li>
+        <li><a href="#">Manifesto</a></li>
+        <li><a href="#">Encrypted Mail</a></li>
+        <li><a href="#">Bug Bounty</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2077 NEXUS SYSTEMS. ALL RIGHTS RESERVED. // NO CORPS ALLOWED.</div>
+    <div class="footer-socials">
+      <a href="#" class="social-btn">X</a>
+      <a href="#" class="social-btn">DC</a>
+      <a href="#" class="social-btn">GH</a>
+      <a href="#" class="social-btn">TG</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+@keyframes panelScan{0%{top:32px}100%{top:100%}}
+</style>
+
+<script>
+// Cursor
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.transform=`translate(${mx-6}px,${my-6}px)`;
+});
+function animRing(){
+  rx+=(mx-rx-18)*0.12;
+  ry+=(my-ry-18)*0.12;
+  ring.style.transform=`translate(${rx}px,${ry}px)`;
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// Reveal on scroll
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}});
+},{threshold:0.1});
+reveals.forEach(el=>obs.observe(el));
+
+// Rain
+const rain=document.getElementById('rain');
+function makeRain(){
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div');
+    d.className='raindrop';
+    d.style.left=Math.random()*100+'%';
+    d.style.height=(30+Math.random()*60)+'px';
+    d.style.animationDuration=(0.5+Math.random()*1.5)+'s';
+    d.style.animationDelay=(-Math.random()*2)+'s';
+    rain.appendChild(d);
+  }
+}
+makeRain();
+
+// Tab switch
+function switchTab(btn,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// Countdown
+let total=14*3600+37*60+52;
+function tick(){
+  if(total<=0)return;
+  total--;
+  const h=Math.floor(total/3600);
+  const m=Math.floor((total%3600)/60);
+  const s=total%60;
+  document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+}
+setInterval(tick,1000);
+
+// Number counter animation
+function animateCounters(){
+  document.querySelectorAll('.band-num').forEach(el=>{
+    const txt=el.innerHTML;
+    // just add a flash effect
+    el.style.animation='corePulse 0.5s ease';
+    setTimeout(()=>el.style.animation='',500);
+  });
+}
+
+// Glitch effect on hero
+setInterval(()=>{
+  const h=document.querySelector('.hero-h1 .line2');
+  if(h){h.style.animation='none';requestAnimationFrame(()=>{h.style.animation=''})}
+},6000);
+
+// Parallax on hero grid
+document.addEventListener('mousemove',e=>{
+  const x=(e.clientX/window.innerWidth-0.5)*20;
+  const y=(e.clientY/window.innerHeight-0.5)*20;
+  const grid=document.querySelector('.hero-grid');
+  if(grid)grid.style.transform=`translate(${x}px,${y}px)`;
+  const orbs=document.querySelectorAll('.orb');
+  orbs.forEach((o,i)=>{
+    const factor=(i+1)*0.5;
+    o.style.transform=`translate(${x*factor}px,${y*factor}px)`;
+  });
+});
+</script>
+</body>
+</html>
