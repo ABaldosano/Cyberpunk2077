@@ -1054,22 +1054,96 @@ footer{
 
 /* RESPONSIVE */
 @media(max-width:900px){
-  .hero-stats{display:none}
-  .hero-visual{width:60%;opacity:0.4}
-  .features-grid{grid-template-columns:1fr 1fr}
+  .showcase-panel{
+  aspect-ratio:auto;
+  min-height:320px;
+  }
+  .hero-stats{
+    display:flex;
+    flex-direction:row;
+    gap:1rem;
+    position:relative;
+    right:auto;
+    top:auto;
+    transform:none;
+    margin-top:2rem;
+    justify-content:flex-start;
+  }
+  .hero-visual{
+  width:100%;
+  opacity:0.25;
+  }
+  .hero{
+  flex-direction:column;
+  padding-top:100px;
+  padding-bottom:60px;
+  }
+  
+  .hero-content{
+    max-width:100%;
+  }
+  
+  .hero-h1{
+    font-size:clamp(2.6rem,10vw,5rem);
+  }
+  
+  .hero-desc{
+    font-size:0.95rem;
+  }
+  
+  .hero-btns{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .features-grid{
+  grid-template-columns:1fr;
+  }
+    .feat-card.featured{
+    grid-column:auto;
+    grid-template-columns:1fr;
+  }
   .feat-card.featured{grid-column:1/3;grid-template-columns:1fr}
   .showcase-layout{grid-template-columns:1fr}
   .stats-band{grid-template-columns:1fr 1fr;gap:30px}
   .band-stat{padding:0 20px}
   .footer-top{grid-template-columns:1fr 1fr}
   .nav-links{display:none}
+  .nav{
+  padding:0 20px;
+}
+
+.nav-cta{
+  padding:8px 14px;
+  font-size:0.6rem;
+}
 }
 @media(max-width:600px){
+  section{
+  padding-left:20px !important;
+  padding-right:20px !important;
+}
+
+.section-title{
+  font-size:2rem;
+}
+  body{cursor:auto}
+  #cursor,#cursor-ring{display:none}
   .features-grid{grid-template-columns:1fr}
   .feat-card.featured{grid-column:1}
   .stats-band{grid-template-columns:1fr 1fr}
   .footer-top{grid-template-columns:1fr}
-  .cta-form{flex-direction:column}
+  .cta-form{
+  flex-direction:column;
+  width:100%;
+}
+
+.cta-input{
+  width:100%;
+}
+
+.cta-form .btn-primary{
+  width:100%;
+}
   .cta-input{clip-path:polygon(8px 0%,calc(100% - 8px) 0%,100% 100%,0% 100%)}
   .cta-form .btn-primary{clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)}
 }
